@@ -296,6 +296,40 @@ bool TestNode(const CService &cip, int &ban, int &clientV, std::string &clientSV
     }
     clientV = node.GetClientVersion();
     clientSV = node.GetClientSubVersion();
+
+    // Parse version string to check version
+    if (clientSV.find("Marscoin Node:") != string::npos) {
+      string version = clientSV.substr(clientSV.find(":")+1);
+      version = version.substr(0, version.find("/"));
+      // Only accept 1.6.5 and higher
+      if (version.compare("1.6.5") < 0) {
+        printf("%s: BAD (old version %s)\n", cip.ToString().c_str(), version.c_str());
+        ban = 1; // Ban old versions
+        return false;
+      }
+    }
+
+    blocks = node.GetStartingHeight();
+    services = node.GetServices();
+    printf("%s: %s!!!\n", cip.ToString().c_str(), ret ? "GOOD" : "BAD");
+    return ret;
+  } catch(std::ios_base::failure& e) {
+    ban = 0;
+    return false;
+  }
+}
+
+bool TestNodeOrig(const CService &cip, int &ban, int &clientV, std::string &clientSV, int &blocks, vector<CAddress>* vAddr, uint64_t& services) {
+  try {
+    CNode node(cip, vAddr);
+    bool ret = node.Run();
+    if (!ret) {
+      ban = node.GetBan();
+    } else {
+      ban = 0;
+    }
+    clientV = node.GetClientVersion();
+    clientSV = node.GetClientSubVersion();
     blocks = node.GetStartingHeight();
     services = node.GetServices();
     printf("%s: %s!!!\n", cip.ToString().c_str(), ret ? "GOOD" : "BAD");
