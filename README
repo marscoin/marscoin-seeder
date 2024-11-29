@@ -1,7 +1,7 @@
-litecoin-seeder
+marscoin-seeder
 ===============
 
-Litecoin-seeder is a crawler for the Litecoin network, which exposes a list
+Marscoin-seeder is a crawler for the Marscoin network, which exposes a list
 of reliable nodes via a built-in DNS server.
 
 Features:
